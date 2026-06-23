@@ -1,5 +1,6 @@
 .app-shell {
   --timer-progress: 0%;
+  --timer-rotation: 0deg;
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
   padding: 28px 0 56px;
@@ -85,6 +86,22 @@ button {
 .group-tabs button:hover {
   transform: translateY(-1px);
   border-color: var(--ink);
+}
+
+.icon-button:disabled {
+  cursor: default;
+  opacity: 0.52;
+}
+
+.icon-button:disabled:hover {
+  transform: none;
+  border-color: var(--line-strong);
+}
+
+.icon-button.active {
+  border-color: var(--green);
+  color: var(--green);
+  background: #edf5f2;
 }
 
 .icon-button:focus-visible,
@@ -285,6 +302,48 @@ button {
   background: var(--green);
 }
 
+.object-demo {
+  display: grid;
+  width: min(100%, 300px);
+  grid-template-columns: auto 1fr;
+  gap: 12px 16px;
+  align-items: end;
+}
+
+.object-label {
+  align-self: center;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.object-value {
+  color: var(--ink);
+  font-size: 58px;
+  line-height: 0.9;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.object-meter {
+  grid-column: 1 / -1;
+  height: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: #fff;
+}
+
+.object-meter span {
+  display: block;
+  width: 14%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--orange);
+}
+
 .dot-grid {
   display: grid;
   grid-template-columns: repeat(7, 18px);
@@ -347,6 +406,57 @@ button {
   background: #d8d5ca;
 }
 
+.callback-demo {
+  display: grid;
+  width: min(100%, 320px);
+  gap: 22px;
+  place-items: center;
+}
+
+.callback-row {
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.callback-step {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  color: #fff;
+  background: var(--blue);
+  font-weight: 800;
+}
+
+.callback-step:nth-child(2) {
+  background: var(--green);
+}
+
+.callback-step:nth-child(3) {
+  background: var(--orange);
+}
+
+.callback-step:nth-child(4) {
+  color: var(--ink);
+  background: var(--yellow);
+}
+
+.callback-status {
+  min-width: 108px;
+  padding: 6px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  color: var(--ink);
+  background: #fff;
+  font-size: 14px;
+  text-align: center;
+}
+
 .timer-demo {
   display: grid;
   width: min(100%, 320px);
@@ -354,6 +464,30 @@ button {
   gap: 14px;
   align-items: center;
   color: var(--green);
+}
+
+.timer-dial {
+  position: relative;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: #fff;
+}
+
+.timer-dial::after {
+  content: '';
+  position: absolute;
+  top: 7px;
+  left: 19px;
+  width: 4px;
+  height: 15px;
+  border-radius: 999px;
+  background: var(--orange);
+  transform: rotate(var(--timer-rotation));
+  transform-origin: 50% 14px;
 }
 
 .timer-meter {
@@ -424,6 +558,26 @@ button {
   stroke-dasharray: 5 6;
 }
 
+.attr-stage {
+  overflow: visible;
+}
+
+.attr-bar {
+  fill: var(--yellow);
+}
+
+.attr-circle {
+  fill: var(--blue);
+}
+
+.attr-guide {
+  fill: none;
+  stroke: #c9c5b8;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 6 8;
+}
+
 .drag-zone {
   position: relative;
   width: min(100%, 350px);
@@ -466,8 +620,8 @@ button {
 
 .scroll-track {
   position: relative;
-  width: 720px;
-  height: 142px;
+  width: 860px;
+  height: 168px;
   padding: 24px;
 }
 
@@ -484,11 +638,50 @@ button {
 }
 
 .scroll-block {
+  position: sticky;
+  left: 24px;
+  z-index: 1;
   display: block;
   width: 56px;
   height: 56px;
   border-radius: 8px;
   background: var(--blue);
+  transform-origin: 50% 50%;
+}
+
+.scroll-panel {
+  position: sticky;
+  left: 24px;
+  display: grid;
+  width: calc(100vw - 116px);
+  max-width: 300px;
+  grid-template-columns: minmax(120px, 1fr) 52px;
+  gap: 12px;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.scroll-progress {
+  height: 10px;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--paper);
+}
+
+.scroll-progress span {
+  display: block;
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--blue);
+}
+
+.scroll-value {
+  color: var(--ink);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
 }
 
 .scope-row {
@@ -512,6 +705,39 @@ button {
   font-weight: 800;
 }
 
+.magnet-zone {
+  position: relative;
+  width: min(100%, 350px);
+  height: 176px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: #fff;
+  touch-action: none;
+}
+
+.magnet-zone::before {
+  content: '';
+  position: absolute;
+  inset: 16px;
+  border: 1px dashed #c8c2b6;
+  border-radius: 6px;
+}
+
+.magnet-target {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--orange);
+  pointer-events: none;
+  will-change: transform;
+}
+
 .waapi-stage {
   position: relative;
   width: min(100%, 260px);
@@ -519,9 +745,16 @@ button {
   color: #c9c5b8;
 }
 
+.waapi-stage svg {
+  position: absolute;
+  right: 26px;
+  bottom: 22px;
+}
+
 .waapi-tile {
   position: absolute;
   top: 16px;
+  left: 18px;
   display: block;
   width: 46px;
   height: 46px;
