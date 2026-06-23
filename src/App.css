@@ -211,6 +211,25 @@ button {
   background: var(--surface);
 }
 
+.demo-card.clickable {
+  cursor: pointer;
+  transition:
+    border-color 180ms ease,
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.demo-card.clickable:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(18, 27, 33, 0.08);
+}
+
+.demo-card.clickable:focus-visible {
+  outline: 3px solid rgba(31, 138, 112, 0.22);
+  outline-offset: 3px;
+}
+
 .demo-card.compact {
   min-height: 240px;
 }
@@ -241,6 +260,101 @@ button {
   place-items: center;
   padding: 22px;
   background: var(--paper);
+}
+
+.source-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(18, 27, 33, 0.46);
+}
+
+.source-modal {
+  display: grid;
+  width: min(820px, 100%);
+  max-height: min(760px, calc(100vh - 48px));
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 22px 70px rgba(18, 27, 33, 0.28);
+}
+
+.source-modal-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: start;
+  padding: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.source-modal-header h2 {
+  margin-top: 4px;
+  font-size: 28px;
+  line-height: 1.12;
+}
+
+.modal-close {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  color: var(--ink);
+  background: #fff;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  border-color: var(--ink);
+}
+
+.modal-close:focus-visible {
+  outline: 3px solid rgba(31, 138, 112, 0.22);
+  outline-offset: 3px;
+}
+
+.source-summary {
+  margin: 0;
+  padding: 16px 20px 0;
+  color: var(--text);
+}
+
+.source-code-label {
+  display: inline-flex;
+  width: max-content;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 20px 10px;
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.source-code {
+  margin: 0 20px 20px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #121b21;
+  color: #f4f0e6;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.source-code code {
+  display: block;
+  min-width: 100%;
+  padding: 18px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  white-space: pre;
 }
 
 .swatch-row {

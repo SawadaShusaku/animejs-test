@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import {
   Activity,
   Box,
+  Code2,
   Grid3X3,
   Move,
   MousePointer2,
@@ -10,6 +11,7 @@ import {
   RotateCcw,
   Route,
   Timer,
+  X,
 } from 'lucide-react'
 import {
   animate,
@@ -158,6 +160,167 @@ const demos = [
   },
 ]
 
+const sourceSamples = {
+  'Transform and color': String.raw`animate(qa('.transform-swatch'), {
+  x: stagger([-18, 18]),
+  y: stagger([18, -18]),
+  rotate: stagger([-16, 16]),
+  scale: [0.88, 1],
+  backgroundColor: (_target, index) =>
+    ['#1f8a70', '#d95d39', '#2b4c7e', '#e3a72f'][index],
+  borderRadius: stagger(['8px', '26px']),
+  delay: stagger(90),
+  loop: true,
+  alternate: true,
+})`,
+  'Keyframes and easing': String.raw`qa('.runner').forEach((runner, index) => {
+  animate(runner, {
+    x: [0, 180],
+    rotate: [0, 360],
+    duration: 1600,
+    loop: true,
+    alternate: true,
+    ease: [
+      'outElastic(1, .55)',
+      'inOutQuad',
+      spring({ stiffness: 90, damping: 12 }),
+    ][index],
+  })
+})`,
+  'Object value tween': String.raw`const target = { value: 18 }
+
+animate(target, {
+  value: 128,
+  duration: 1800,
+  loop: true,
+  alternate: true,
+  ease: 'inOutQuad',
+  onUpdate: () => {
+    const value = Math.round(target.value)
+    objectValue.textContent = value.toString()
+    objectMeter.style.width = String((value / 128) * 100) + '%'
+  },
+})`,
+  'WAAPI bridge': String.raw`waapi.animate(waapiTile, {
+  x: ['0px', '112px', '112px', '0px', '0px'],
+  y: ['0px', '0px', '58px', '58px', '0px'],
+  rotate: ['0deg', '90deg', '180deg', '270deg', '360deg'],
+  backgroundColor: ['#d95d39', '#2b4c7e', '#1f8a70', '#e3a72f', '#d95d39'],
+  duration: 2600,
+  loop: true,
+  ease: 'linear',
+})`,
+  'Stagger grid': String.raw`animate(qa('.grid-dot'), {
+  scale: stagger([1.35, 0.55], { grid: [7, 7], from: 'center' }),
+  opacity: stagger([1, 0.45], { grid: [7, 7], from: 'center' }),
+  backgroundColor: stagger(['#1f8a70', '#e3a72f'], {
+    grid: [7, 7],
+    from: 'center',
+  }),
+  delay: stagger(38, { grid: [7, 7], from: 'center' }),
+  loop: true,
+  alternate: true,
+})`,
+  'Timeline sequence': String.raw`createTimeline({
+  defaults: { duration: 720, ease: 'inOutCubic' },
+  loop: true,
+  loopDelay: 400,
+})
+  .add(qa('.timeline-bar'), { scaleX: [0.18, 1], delay: stagger(110) })
+  .add(q('.timeline-cursor'), { x: ['0%', 'calc(100% - 18px)'] }, '<')
+  .add(qa('.timeline-node'), { y: [0, -18, 0], delay: stagger(80) }, '-=460')`,
+  'Timer state': String.raw`createTimer({
+  duration: 2400,
+  loop: true,
+  autoplay: true,
+  onUpdate: (self) => {
+    const progress = self.iterationProgress * 100
+    root.style.setProperty('--timer-progress', String(progress) + '%')
+    root.style.setProperty('--timer-rotation', String(progress * 3.6) + 'deg')
+    progressValue.textContent = String(Math.round(progress)) + '%'
+  },
+})`,
+  'Timeline callbacks': String.raw`createTimeline({
+  defaults: { duration: 520, ease: 'inOutQuad' },
+  loop: true,
+})
+  .call(() => {
+    callbackStatus.textContent = 'prepare'
+  })
+  .add(qa('.callback-step'), { scale: [0.82, 1], delay: stagger(90) })
+  .call(() => {
+    callbackStatus.textContent = 'commit'
+  }, '+=80')`,
+  'SVG drawing': String.raw`animate(createDrawable(q('.draw-line')), {
+  draw: ['0 0', '0 1', '1 1'],
+  duration: 1800,
+  loop: true,
+  loopDelay: 360,
+  ease: 'inOut(3)',
+})`,
+  'Motion path': String.raw`animate(q('.path-orb'), {
+  ...createMotionPath(q('.motion-track')),
+  duration: 2600,
+  loop: true,
+  ease: 'linear',
+})`,
+  'Path morph': String.raw`animate(q('.morph-source'), {
+  d: morphTo(q('.morph-target')),
+  duration: 1600,
+  loop: true,
+  alternate: true,
+  ease: 'inOutQuad',
+})`,
+  'SVG attributes': String.raw`animate(q('.attr-circle'), {
+  cx: [48, 176],
+  r: [15, 28],
+  fill: ['#2b4c7e', '#1f8a70'],
+  duration: 1400,
+  loop: true,
+  alternate: true,
+})`,
+  'Draggable spring': String.raw`createDraggable(q('.drag-target'), {
+  container: q('.drag-zone'),
+  snap: 20,
+  releaseEase: spring({ stiffness: 160, damping: 14 }),
+  cursor: { onHover: 'grab', onGrab: 'grabbing' },
+})`,
+  'Scroll sync': String.raw`const scrollObserver = onScroll({
+  container: scrollShell,
+  target: scrollTrack,
+  axis: 'x',
+  enter: 0,
+  leave: 'max',
+  onUpdate: updateScrollDemo,
+})
+
+scrollShell.addEventListener('scroll', updateScrollDemo, { passive: true })`,
+  'Scope media query': String.raw`createScope({
+  root,
+  mediaQueries: { narrow: '(max-width: 720px)' },
+}).add(({ matches }) => {
+  const animation = animate(qa('.scope-chip'), {
+    x: matches.narrow ? stagger([-10, 10]) : 0,
+    y: matches.narrow ? 0 : stagger([-12, 12]),
+    loop: true,
+    alternate: true,
+  })
+
+  return () => animation.revert()
+})`,
+  'Pointer follow': String.raw`const magnet = createAnimatable(magnetTarget, {
+  x: { duration: 520, ease: spring({ stiffness: 160, damping: 18 }) },
+  y: { duration: 520, ease: spring({ stiffness: 160, damping: 18 }) },
+  rotate: { duration: 420, ease: 'out(3)' },
+})
+
+magnetZone.addEventListener('pointermove', (event) => {
+  const rect = magnetZone.getBoundingClientRect()
+  magnet.x(event.clientX - rect.left)
+  magnet.y(event.clientY - rect.top)
+})`,
+}
+
 const cleanupItem = (item) => {
   if (!item) return
   if (typeof item.revert === 'function') {
@@ -188,9 +351,26 @@ function SectionHeader({ group }) {
   )
 }
 
-function DemoCard({ demo, children, compact = false }) {
+function DemoCard({ demo, children, compact = false, onOpen }) {
+  const openSource = (event) => {
+    if (event.target.closest('[data-demo-control="true"]')) return
+    onOpen(demo)
+  }
+  const openSourceFromKeyboard = (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return
+    event.preventDefault()
+    onOpen(demo)
+  }
+
   return (
-    <article className={compact ? 'demo-card compact' : 'demo-card'}>
+    <article
+      aria-label={`${demo.title} source`}
+      className={compact ? 'demo-card compact clickable' : 'demo-card clickable'}
+      onClick={openSource}
+      onKeyDown={openSourceFromKeyboard}
+      role="button"
+      tabIndex={0}
+    >
       <header className="demo-card-header">
         <div>
           <p className="api-label">{demo.api}</p>
@@ -203,6 +383,61 @@ function DemoCard({ demo, children, compact = false }) {
   )
 }
 
+function SourceModal({ demo, onClose }) {
+  useEffect(() => {
+    if (!demo) {
+      document.body.classList.remove('modal-open')
+      return undefined
+    }
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        onClose()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    document.body.classList.add('modal-open')
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.body.classList.remove('modal-open')
+    }
+  }, [demo, onClose])
+
+  if (!demo) return null
+
+  return (
+    <div className="source-overlay" onClick={onClose}>
+      <section
+        aria-labelledby="source-modal-title"
+        aria-modal="true"
+        className="source-modal"
+        onClick={(event) => event.stopPropagation()}
+        role="dialog"
+      >
+        <header className="source-modal-header">
+          <div>
+            <p className="api-label">{demo.api}</p>
+            <h2 id="source-modal-title">{demo.title}</h2>
+          </div>
+          <button type="button" className="modal-close" onClick={onClose} aria-label="Close source view">
+            <X size={18} />
+          </button>
+        </header>
+        <p className="source-summary">{demo.summary}</p>
+        <div className="source-code-label">
+          <Code2 size={16} />
+          <span>Source excerpt</span>
+        </div>
+        <pre className="source-code">
+          <code>{sourceSamples[demo.title]}</code>
+        </pre>
+      </section>
+    </div>
+  )
+}
+
 function App() {
   const rootRef = useRef(null)
   const playbackItemsRef = useRef([])
@@ -210,6 +445,7 @@ function App() {
   const [runId, setRunId] = useState(0)
   const [activeGroup, setActiveGroup] = useState('all')
   const [isPaused, setIsPaused] = useState(false)
+  const [selectedDemo, setSelectedDemo] = useState(null)
 
   const setPlaybackPaused = (nextPaused) => {
     isPausedRef.current = nextPaused
@@ -656,19 +892,20 @@ function App() {
             {demos
               .filter((demo) => demo.group === group.id)
               .map((demo) => (
-                <DemoSlot key={demo.title} demo={demo} />
+                <DemoSlot key={demo.title} demo={demo} onOpenSource={setSelectedDemo} />
               ))}
           </div>
         </section>
       ))}
+      <SourceModal demo={selectedDemo} onClose={() => setSelectedDemo(null)} />
     </main>
   )
 }
 
-function DemoSlot({ demo }) {
+function DemoSlot({ demo, onOpenSource }) {
   if (demo.title === 'Transform and color') {
     return (
-      <DemoCard demo={demo}>
+      <DemoCard demo={demo} onOpen={onOpenSource}>
         <div className="swatch-row" aria-hidden="true">
           {Array.from({ length: 4 }, (_, index) => (
             <span className="transform-swatch" key={index} />
@@ -680,7 +917,7 @@ function DemoSlot({ demo }) {
 
   if (demo.title === 'Keyframes and easing') {
     return (
-      <DemoCard demo={demo}>
+      <DemoCard demo={demo} onOpen={onOpenSource}>
         <div className="runner-stack" aria-hidden="true">
           {['Elastic', 'Quad', 'Spring'].map((label) => (
             <div className="runner-lane" key={label}>
@@ -695,7 +932,7 @@ function DemoSlot({ demo }) {
 
   if (demo.title === 'Object value tween') {
     return (
-      <DemoCard demo={demo}>
+      <DemoCard demo={demo} onOpen={onOpenSource}>
         <div className="object-demo" aria-hidden="true">
           <span className="object-label">value</span>
           <strong className="object-value">18</strong>
@@ -709,7 +946,7 @@ function DemoSlot({ demo }) {
 
   if (demo.title === 'Stagger grid') {
     return (
-      <DemoCard demo={demo}>
+      <DemoCard demo={demo} onOpen={onOpenSource}>
         <div className="dot-grid" aria-hidden="true">
           {Array.from({ length: 49 }, (_, index) => (
             <span className="grid-dot" key={index} />
@@ -721,7 +958,7 @@ function DemoSlot({ demo }) {
 
   if (demo.title === 'Timeline sequence') {
     return (
-      <DemoCard demo={demo}>
+      <DemoCard demo={demo} onOpen={onOpenSource}>
         <div className="timeline-stage" aria-hidden="true">
           <div className="timeline-cursor" />
           {[0, 1, 2].map((index) => (
@@ -737,7 +974,7 @@ function DemoSlot({ demo }) {
 
   if (demo.title === 'Timeline callbacks') {
     return (
-      <DemoCard demo={demo}>
+      <DemoCard demo={demo} onOpen={onOpenSource}>
         <div className="callback-demo" aria-hidden="true">
           <div className="callback-row">
             {['A', 'B', 'C', 'D'].map((label) => (
@@ -754,7 +991,7 @@ function DemoSlot({ demo }) {
 
   if (demo.title === 'Timer state') {
     return (
-      <DemoCard demo={demo} compact>
+      <DemoCard demo={demo} compact onOpen={onOpenSource}>
         <div className="timer-demo" aria-hidden="true">
           <span className="timer-dial">
             <Timer size={24} />
@@ -770,7 +1007,7 @@ function DemoSlot({ demo }) {
 
   if (demo.title === 'SVG drawing') {
     return (
-      <DemoCard demo={demo}>
+      <DemoCard demo={demo} onOpen={onOpenSource}>
         <svg className="svg-stage draw-stage" viewBox="0 0 260 120" aria-hidden="true">
           <path
             className="draw-line"
@@ -786,7 +1023,7 @@ function DemoSlot({ demo }) {
 
   if (demo.title === 'Motion path') {
     return (
-      <DemoCard demo={demo}>
+      <DemoCard demo={demo} onOpen={onOpenSource}>
         <div className="motion-wrap" aria-hidden="true">
           <svg className="svg-stage" viewBox="0 0 280 130">
             <path className="motion-track" d="M28 94 C70 18, 126 18, 146 74 S222 128, 252 42" />
@@ -801,7 +1038,7 @@ function DemoSlot({ demo }) {
 
   if (demo.title === 'Path morph') {
     return (
-      <DemoCard demo={demo}>
+      <DemoCard demo={demo} onOpen={onOpenSource}>
         <svg className="svg-stage morph-stage" viewBox="0 0 220 150" aria-hidden="true">
           <path
             className="morph-source"
@@ -818,7 +1055,7 @@ function DemoSlot({ demo }) {
 
   if (demo.title === 'SVG attributes') {
     return (
-      <DemoCard demo={demo}>
+      <DemoCard demo={demo} onOpen={onOpenSource}>
         <svg className="svg-stage attr-stage" viewBox="0 0 220 150" aria-hidden="true">
           <rect className="attr-bar" x="26" y="102" width="54" height="16" rx="8" />
           <circle className="attr-circle" cx="48" cy="62" r="15" />
@@ -830,8 +1067,8 @@ function DemoSlot({ demo }) {
 
   if (demo.title === 'Draggable spring') {
     return (
-      <DemoCard demo={demo}>
-        <div className="drag-zone">
+      <DemoCard demo={demo} onOpen={onOpenSource}>
+        <div className="drag-zone" data-demo-control="true">
           <div className="drag-target">
             <Move size={22} />
           </div>
@@ -842,8 +1079,13 @@ function DemoSlot({ demo }) {
 
   if (demo.title === 'Scroll sync') {
     return (
-      <DemoCard demo={demo}>
-        <div className="scroll-shell" tabIndex="0" aria-label="Horizontal scroll animation demo">
+      <DemoCard demo={demo} onOpen={onOpenSource}>
+        <div
+          className="scroll-shell"
+          data-demo-control="true"
+          tabIndex="0"
+          aria-label="Horizontal scroll animation demo"
+        >
           <div className="scroll-track">
             <span className="scroll-block" />
             <div className="scroll-panel">
@@ -860,7 +1102,7 @@ function DemoSlot({ demo }) {
 
   if (demo.title === 'Scope media query') {
     return (
-      <DemoCard demo={demo}>
+      <DemoCard demo={demo} onOpen={onOpenSource}>
         <div className="scope-row" aria-hidden="true">
           {['S', 'C', 'O', 'P', 'E'].map((letter) => (
             <span className="scope-chip" key={letter}>
@@ -874,8 +1116,8 @@ function DemoSlot({ demo }) {
 
   if (demo.title === 'Pointer follow') {
     return (
-      <DemoCard demo={demo}>
-        <div className="magnet-zone" aria-label="Pointer follow demo">
+      <DemoCard demo={demo} onOpen={onOpenSource}>
+        <div className="magnet-zone" data-demo-control="true" aria-label="Pointer follow demo">
           <span className="magnet-target">
             <MousePointer2 size={22} />
           </span>
@@ -885,7 +1127,7 @@ function DemoSlot({ demo }) {
   }
 
   return (
-    <DemoCard demo={demo}>
+    <DemoCard demo={demo} onOpen={onOpenSource}>
       <div className="waapi-stage" aria-hidden="true">
         <Grid3X3 size={44} />
         <span className="waapi-tile" />
